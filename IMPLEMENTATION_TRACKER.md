@@ -9,6 +9,8 @@ Agents must mark items as `[x]` when verified complete, and track major mileston
 - [x] Scaffold sub-projects (`types`, `engine`, `sql-template`, `adapter-*`, `power-app`, `reader-app`).
 - [x] Configure base testing (`vitest`) and strict `tsc` configurations.
 - [x] Sync `CLAUDE.md` context loading and agent workflows.
+- [x] Author core `README.md` and structure `docs/` folder.
+- [x] Initialize Git repository and link remote origin.
 
 ---
 

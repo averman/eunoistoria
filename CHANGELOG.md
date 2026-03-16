@@ -12,13 +12,16 @@ and this project adheres to Semantic Versioning (monorepo scoped).
 - Scaffolded 7 core packages: \`types\`, \`engine\`, \`sql-template\`, \`adapter-sqlite\`, \`adapter-postgres\`, \`power-app\`, \`reader-app\`.
 - Set up base \`tsconfig.json\` and \`vitest.workspace.ts\`.
 - Added dummy tests validating build/test pipelines across all workspaces.
-- Synchronized \`CLAUDE.md\` and \`REVIEW_AGENT_INSTRUCTIONS.md\` to reflect the Antigravity agent workflow and Walkthrough artifacts.
+- Synchronized `CLAUDE.md` and `REVIEW_AGENT_INSTRUCTIONS.md` to reflect the Antigravity agent workflow and Walkthrough artifacts.
+- Authored a semantics-first `README.md` identifying the product as a Multiversal CMS.
+- Initialized local git repository and linked to `origin` remote.
 
 ### Changed
-- Finalized architecture decisions in \`DECISION_LOG.md\`: 
+- Finalized architecture decisions in `DECISION_LOG.md`: 
   - Monorepo tooling: pnpm + turborepo
   - UI framework: React + Electron + CodeMirror 6
   - Server framework: Fastify (Serverless ready)
+- Reorganized raw documentation markdown files into structured `docs/` and `packages/` directories.
 
 ### Fixed
 - N/A
