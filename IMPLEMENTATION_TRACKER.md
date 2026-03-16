@@ -13,7 +13,7 @@ Agents must mark items as `[x]` when verified complete, and track major mileston
 ---
 
 ## 🏃 Phase 1: Foundation (`packages/types`)
-*Zero runtime code. Strict type definitions matching `ERD.md` and `DESIGN.md`.*
+*Zero runtime code. Strict type definitions matching `docs/ERD.md` and `docs/DESIGN.md`.*
 
 - [ ] Define **Entity Types**: `Document`, `CompositionSlot`, `VariantGroup`, `VariantGroupMember`, `Tag`.
 - [ ] Define **Rule & Preset Types**: `Preset`, `PresetRule` (JSON schema), `PresetAdHocDocument`.
