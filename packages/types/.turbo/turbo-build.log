@@ -1,0 +1,4 @@
+
+> @eunoistoria/types@0.1.0 build /Users/averman/work/eunoistoria/packages/types
+> tsc --noEmit
+
