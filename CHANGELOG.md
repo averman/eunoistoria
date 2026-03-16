@@ -8,6 +8,10 @@ and this project adheres to Semantic Versioning (monorepo scoped).
 ## [Unreleased]
 
 ### Added
+- **Phase 1 Complete**: Implemented pure, functional `packages/types` interfaces for the Hexagonal Architecture Engine.
+  - `entities.ts`: Defined `DataDocument` (unresolved input) and `ResolvedDocument` (output AST).
+  - `rules.ts`: Defined strictly typed JSON AST structure for `Premise` and `Action`.
+  - `ports.ts`: Defined `DataStorePort`, `AccessFilterPort`, and `OutputPort` interfaces.
 - Initialized pnpm monorepo structure with Turborepo caching.
 - Scaffolded 7 core packages: \`types\`, \`engine\`, \`sql-template\`, \`adapter-sqlite\`, \`adapter-postgres\`, \`power-app\`, \`reader-app\`.
 - Set up base \`tsconfig.json\` and \`vitest.workspace.ts\`.

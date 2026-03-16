@@ -28,3 +28,37 @@
 2026-03-16T07:36:15.723853Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
 2026-03-16T07:36:17.722355Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("IMPLEMENTATION_TRACKER.md")}
 2026-03-16T07:36:17.722366Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T07:40:56.322794Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("README.md")}
+2026-03-16T07:40:56.322818Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T07:40:58.222285Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".gitignore")}
+2026-03-16T07:40:58.222295Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T07:43:08.323456Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".gitignore"), AnchoredSystemPathBuf("README.md")}
+2026-03-16T07:43:08.323495Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T07:44:22.623090Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("README.md")}
+2026-03-16T07:44:22.623108Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T07:45:09.423386Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("README.md")}
+2026-03-16T07:45:09.423401Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T07:46:34.423265Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("README.md")}
+2026-03-16T07:46:34.423306Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T07:46:36.423620Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".gitignore")}
+2026-03-16T07:46:36.423629Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T08:00:43.121029Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PROJECT_ARCHITECTURE.md"), AnchoredSystemPathBuf("docs"), AnchoredSystemPathBuf("docs/DECISION_LOG.md"), AnchoredSystemPathBuf("docs/TECH_STACK.md"), AnchoredSystemPathBuf("docs/PRD.md"), AnchoredSystemPathBuf("TECH_STACK.md"), AnchoredSystemPathBuf("docs/FEATURE_LIFECYCLE.md"), AnchoredSystemPathBuf("FEATURE_LIFECYCLE.md"), AnchoredSystemPathBuf("docs/DESIGN.md"), AnchoredSystemPathBuf("docs/ERD.md"), AnchoredSystemPathBuf("docs/PROJECT_ARCHITECTURE.md"), AnchoredSystemPathBuf("PRD.md"), AnchoredSystemPathBuf("DESIGN.md"), AnchoredSystemPathBuf("DECISION_LOG.md"), AnchoredSystemPathBuf("ERD.md"), AnchoredSystemPathBuf("docs/CONVENTIONS.md"), AnchoredSystemPathBuf("CONVENTIONS.md")}
+2026-03-16T08:00:43.121046Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T08:00:43.220663Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/REVIEW_AGENT_INSTRUCTIONS.md"), AnchoredSystemPathBuf("TYPES.md"), AnchoredSystemPathBuf("docs/TASK_SPEC_TEMPLATE.md"), AnchoredSystemPathBuf("packages/sql-template/SQL_TEMPLATE.md"), AnchoredSystemPathBuf("SQL_TEMPLATE.md"), AnchoredSystemPathBuf("packages/engine/ENGINE.md"), AnchoredSystemPathBuf("packages/types/TYPES.md"), AnchoredSystemPathBuf("TASK_SPEC_TEMPLATE.md"), AnchoredSystemPathBuf("ENGINE.md"), AnchoredSystemPathBuf("REVIEW_AGENT_INSTRUCTIONS.md")}
+2026-03-16T08:00:43.220672Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@eunoistoria/engine"), path: AnchoredSystemPathBuf("packages/engine") }, WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("@eunoistoria/types"), path: AnchoredSystemPathBuf("packages/types") }, WorkspacePackage { name: Other("@eunoistoria/sql-template"), path: AnchoredSystemPathBuf("packages/sql-template") }}))
+2026-03-16T08:01:56.821104Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("IMPLEMENTATION_TRACKER.md")}
+2026-03-16T08:01:56.821135Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T16:32:21.184154Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("IMPLEMENTATION_TRACKER.md")}
+2026-03-16T16:32:21.184182Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T16:33:50.984237Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/types/src/entities.ts")}
+2026-03-16T16:33:50.984275Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@eunoistoria/types"), path: AnchoredSystemPathBuf("packages/types") }}))
+2026-03-16T16:33:52.083952Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/types/src/index.ts")}
+2026-03-16T16:33:52.083961Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@eunoistoria/types"), path: AnchoredSystemPathBuf("packages/types") }}))
+2026-03-16T16:34:08.183126Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/types/src/ports.ts")}
+2026-03-16T16:34:08.183146Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@eunoistoria/types"), path: AnchoredSystemPathBuf("packages/types") }}))
+2026-03-16T16:34:10.185044Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/types/src/resolution.ts")}
+2026-03-16T16:34:10.185051Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@eunoistoria/types"), path: AnchoredSystemPathBuf("packages/types") }}))
+2026-03-16T16:37:14.186009Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/DECISION_LOG.md")}
+2026-03-16T16:37:14.186120Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2026-03-16T16:39:06.594021Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("CHANGELOG.md")}
+2026-03-16T16:39:06.594057Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))

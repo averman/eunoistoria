@@ -14,14 +14,14 @@ Agents must mark items as `[x]` when verified complete, and track major mileston
 
 ---
 
-## 🏃 Phase 1: Foundation (`packages/types`)
+## ✅ Phase 1: Foundation (`packages/types`)
 *Zero runtime code. Strict type definitions matching `docs/ERD.md` and `docs/DESIGN.md`.*
 
-- [ ] Define **Entity Types**: `Document`, `CompositionSlot`, `VariantGroup`, `VariantGroupMember`, `Tag`.
-- [ ] Define **Rule & Preset Types**: `Preset`, `PresetRule` (JSON schema), `PresetAdHocDocument`.
-- [ ] Define **Resolution Types**: `SelectionMap`, `Variable`.
-- [ ] Define **Utility Types**: `Result<T,E>` and error enums.
-- [ ] Define **Port Interfaces**: `DataStorePort`, `AccessFilterPort`, `OutputPort`.
+- [x] Define **Entity Types**: `Document`, `CompositionSlot`, `VariantGroup`, `Tag`, `Preset` (updated per Domain Model Iteration 8).
+- [x] Define **Rule Types**: `Premise`, `Action`, `Operand`, `SortKey` (JSON schema AST).
+- [x] Define **Resolution Types**: `SelectionMap`, `VariableMap`.
+- [x] Define **Utility Types**: `Result<T,E>` and error enums.
+- [x] Define **Port Interfaces**: `DataStorePort`, `AccessFilterPort`, `OutputPort`.
 
 ---
 

@@ -118,3 +118,11 @@ Format:
 - **Rationale:** Fastify is lightweight and has excellent serverless adapter support (`@fastify/aws-lambda`).
 - **Alternatives considered:** Express, Hono.
 - **Consequences:** `packages/reader-app` will expose a fastify app that can be bundled for a serverless runtime.
+
+### DEC-011 Pure Logic-Layer Domain Models (No SQL Relational Mapping)
+- **Date:** 2026-03-16
+- **Context:** Defining the strict Engine contracts (`packages/types`) based on the DB ERD schema. Needed to decide whether Engine types should mirror relational tables (with foreign keys like `projectId` and `color` properties intended for UI).
+- **Decision:** The Engine types are completely decoupled from SQL schemas. They use deeply nested topologies (`DataDocument` matching Input with abstract `CompositionSlot` pointers, and `ResolvedDocument` outputting a unified tree algorithm AST). Structural types eliminate all database cruft and presentation state.
+- **Rationale:** A Hexagonal Architecture demands a pure core domain. If the Engine includes SQL foreign keys or table join constructs in its logical evaluation memory, it breaks the separation of concerns. Data Adapters are strictly responsible for doing the SQL JOINs to build and hydrate these topological `DataDocument` trees before sending them to the Engine.
+- **Alternatives considered:** 1:1 ERD mapping (SQL-like DTOs). Rejected because it requires the Engine to understand relational lookups and boolean discriminators instead of just evaluating trees natively.
+- **Consequences:** Adapters bear the burden of translating relational tables into AST structures. Engine types can safely use TypeScript string literals for dispatch without caring how they are stored.
