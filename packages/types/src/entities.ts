@@ -5,6 +5,7 @@ export type DocumentId = string & { readonly __brand: unique symbol };
 export type SlotId = string & { readonly __brand: unique symbol };
 export type VariantGroupId = string & { readonly __brand: unique symbol };
 export type PresetId = string & { readonly __brand: unique symbol };
+export type TagId = string & { readonly __brand: unique symbol };
 
 // -----------------------------------------------------------------------------
 // 1. Tags (Value Objects)
@@ -41,13 +42,11 @@ export interface DataComposition extends BaseDataDocument {
 
 export interface CompositionSlot {
   id: SlotId;
-
-  // It points to exactly one specific document...
-  documentId?: DocumentId;
-
-  // ...OR a variant group, requiring an index to know which member to resolve.
-  variantGroupId?: VariantGroupId;
-  selectedIndex?: number;
+  compositionId: DocumentId;
+  slotOrder: number;                          // 0-indexed position within the composition
+  referenceType: 'document' | 'variant_group';
+  referenceDocumentId?: DocumentId;           // defined when referenceType === 'document'
+  referenceVariantGroupId?: VariantGroupId;   // defined when referenceType === 'variant_group'
 }
 
 export interface VariantGroup {
@@ -68,6 +67,7 @@ export interface Preset {
 
   // The universal array index naturally dictates rule evaluation order.
   rules: Rule[];
+  adHocDocuments: DocumentId[]; // ordered by inclusion_order ascending; empty array if none
 }
 
 

@@ -1,10 +1,26 @@
+# TYP-004 — Expand DataStorePort
+
+- **Sub-project:** `packages/types`
+- **Branch:** `feat/TYP-004-datastore-port`
+- **Depends on:** TYP-001, TYP-002, TYP-003
+- **Files modified:** `packages/types/src/ports.ts`
+
+## Objective
+
+Replace the current minimal `DataStorePort` (3 read methods) with the full interface covering all reads, CRUD writes, and predicate-pushdown query. This is the complete contract that all adapters must implement.
+
+## Behavior
+
+Replace the entire `DataStorePort` interface in `packages/types/src/ports.ts` with:
+
+```typescript
 import {
   DocumentId, SlotId, VariantGroupId, TagId, PresetId,
-  DataDocument, Preset, CompositionSlot
+  DataDocument, Preset
 } from './entities.js';
 import {
   DocumentRecord, VariantGroupRecord, VariantGroupMemberRecord, TagRecord,
-  PresetRecord, PresetRuleRecord, PresetAdHocDocumentRecord,
+  PresetRecord, PresetRuleRecord, PresetAdHocDocumentRecord, CompositionSlot,
   CreateDocumentInput, UpdateDocumentInput, DocumentFilters, CreateSlotInput,
   CreateVariantGroupInput, CreatePresetInput, UpdatePresetInput,
   AddPresetRuleInput, DocumentPredicate
@@ -96,17 +112,12 @@ export interface DataStorePort {
   removePresetAdHocDocument(presetId: PresetId, documentId: DocumentId): Promise<Result<void, DataStoreError>>;
   reorderPresetAdHocDocuments(presetId: PresetId, orderedDocumentIds: DocumentId[]): Promise<Result<void, DataStoreError>>;
 }
+```
 
-// -----------------------------------------------------------------------------
-// The Product App (Reader App vs Power App) injects this to control visibility.
-// -----------------------------------------------------------------------------
-export interface AccessFilterPort {
-  canAccess(documentId: DocumentId): Promise<boolean>;
-}
+`AccessFilterPort` and `OutputPort` remain unchanged.
 
-// -----------------------------------------------------------------------------
-// The Product App implements this to receive the final Engine output strings.
-// -----------------------------------------------------------------------------
-export interface OutputPort {
-  writeOutput(filename: string, content: string): Promise<Result<void, Error>>;
-}
+## Test Cases
+
+`tsc --noEmit` passes.
+
+---

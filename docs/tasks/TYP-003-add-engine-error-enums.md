@@ -1,21 +1,19 @@
-export type Result<T, E> = 
-  | { ok: true; value: T } 
-  | { ok: false; error: E };
+# TYP-003 — Add Engine Error Enums
 
-export enum DataStoreError {
-  ConnectionFailed = 'ConnectionFailed',
-  QueryFailed = 'QueryFailed',
-  TransactionFailed = 'TransactionFailed',
-  ConstraintViolation = 'ConstraintViolation',
-  NotFound = 'NotFound'
-}
+- **Sub-project:** `packages/types`
+- **Branch:** `feat/TYP-003-error-enums`
+- **Depends on:** none
+- **Files modified:** `packages/types/src/results.ts`
 
-export enum ResolutionError {
-  PresetNotFound = 'PresetNotFound',
-  MaxDepthExceeded = 'MaxDepthExceeded',
-  BrokenReference = 'BrokenReference'
-}
+## Objective
 
+Add the per-entity error enums that the engine's CRUD methods return. These are separate from `DataStoreError` (which is a low-level storage error) and `ResolutionError` (which already exists).
+
+## Behavior
+
+Append the following enums to `packages/types/src/results.ts`. Do not modify existing content.
+
+```typescript
 export enum DocumentError {
   NotFound = 'NotFound',
   CompositionCannotHaveContent = 'CompositionCannotHaveContent',
@@ -61,4 +59,12 @@ export enum ValidationError {
   CompositionNotFound = 'CompositionNotFound',
   StorageFailure = 'StorageFailure',
 }
+```
 
+Export all new enums from `packages/types/src/index.ts`.
+
+## Test Cases
+
+`tsc --noEmit` passes. All enums accessible from `@project/types`.
+
+---

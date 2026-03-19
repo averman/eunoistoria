@@ -19,6 +19,12 @@ and this project adheres to Semantic Versioning (monorepo scoped).
 - Synchronized `CLAUDE.md` and `REVIEW_AGENT_INSTRUCTIONS.md` to reflect the Antigravity agent workflow and Walkthrough artifacts.
 - Authored a semantics-first `README.md` identifying the product as a Multiversal CMS.
 - Initialized local git repository and linked to `origin` remote.
+- **Phase 2 Complete**: Implemented the full `packages/engine` business logic layer (TYP-001–ENG-013).
+  - `packages/types`: Added `crud.ts` (flat DB records, CRUD inputs, `DocumentPredicate`, `QueryPlan`, `SlotRuleContext`); expanded `DataStorePort` (40+ methods); added `engine-interface.ts` (`Engine` interface); added 6 engine error enums to `results.ts`; updated `entities.ts` (`TagId`, new `CompositionSlot` schema, `Preset.adHocDocuments`).
+  - `packages/engine/src`: `token-estimation.ts`, `rule-evaluator.ts` (toggle/sort/select with type coercion D-BP-10), `cycle-detection.ts` (BFS), `validation.ts`, `resolution.ts` (recursive walker with access filter), `query-builder.ts`, plus `crud/` modules for documents, slots, variant groups, tags, and presets.
+  - `packages/engine/tests`: 104 tests across 14 test files (mock data store, unit tests per module, CRUD tests, integration tests) — all passing.
+  - Engine public API exposed via `createEngine(dataStore, accessFilter): Engine` factory.
+
 
 ### Changed
 - Finalized architecture decisions in `DECISION_LOG.md`: 

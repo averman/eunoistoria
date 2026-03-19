@@ -25,30 +25,46 @@ Agents must mark items as `[x]` when verified complete, and track major mileston
 
 ---
 
-## ⏳ Phase 2: Engine Core (`packages/engine`)
+## ✅ Phase 2: Engine Core (`packages/engine`)
 *Pure TypeScript business logic. Mock `DataStorePort` with in-memory tests.*
+*Full task specs: `docs/tasks/TYP-001` through `ENG-013` (see `docs/TASK_BREAKDOWN_P2_P3.md` for overview).*
 
-- [ ] Implement **CRUD Orchestration**: Create, update, delete for all core entities (delegating to port).
-- [ ] Implement **Validation & Cycle Detection**: Mutual exclusion of leaf/composition content, universal default checks, and circular reference prevention.
-- [ ] Implement **Rule Evaluator**: Takes JSON rules, variables, and tags -> produces `SelectionMap`.
-- [ ] Implement **Resolution Walker**: Walks `CompositionSlot` tree using a `SelectionMap` and `AccessFilterPort` -> produces flat `.md`.
-- [ ] Implement **Query Builder**: Translates Engine predicate parameters into a pushdown/local evaluation plan.
+- [x] **TYP-001** Update Entity Types (`CompositionSlot`, `Preset`, add `TagId`)
+- [x] **TYP-002** Add CRUD & Auxiliary Types (`DocumentRecord`, input types, `SlotRuleContext`, `DocumentPredicate`, etc.)
+- [x] **TYP-003** Add Engine Error Enums (`DocumentError`, `SlotError`, `VariantGroupError`, `TagError`, `PresetError`, `ValidationError`)
+- [x] **TYP-004** Expand `DataStorePort` (full CRUD + `queryDocuments`)
+- [x] **TYP-005** Add `Engine` Interface to `packages/types`
+- [x] **ENG-001** Mock DataStore test helper (`tests/helpers/mock-data-store.ts`)
+- [x] **ENG-002** Token Estimation (`src/token-estimation.ts`)
+- [x] **ENG-003** Rule Evaluator (`src/rule-evaluator.ts`)
+- [x] **ENG-004** Cycle Detection (`src/cycle-detection.ts`)
+- [x] **ENG-005** Validation Module (`src/validation.ts`)
+- [x] **ENG-006** Resolution Walker (`src/resolution.ts`)
+- [x] **ENG-007** Query Builder (`src/query-builder.ts`)
+- [x] **ENG-008** CRUD: Documents (`src/crud/documents.ts`)
+- [x] **ENG-009** CRUD: Slots (`src/crud/slots.ts`)
+- [x] **ENG-010** CRUD: Variant Groups (`src/crud/variant-groups.ts`)
+- [x] **ENG-011** CRUD: Tags (`src/crud/tags.ts`)
+- [x] **ENG-012** CRUD: Presets (`src/crud/presets.ts`)
+- [x] **ENG-013** Engine Public API — `createEngine` factory (`src/index.ts`)
 
 ---
 
 ## ⏳ Phase 3: Storage Layer
 *Database interaction through the `DataStorePort`.*
 
+*Full task specs: `docs/tasks/SQL-001` through `ADT-004` (see `docs/TASK_BREAKDOWN_P2_P3.md` for overview).*
+
 **Part A: `packages/sql-template`**
-- [ ] Define base DDL creation strings across common SQL.
-- [ ] Implement parameterized SQL query templates.
-- [ ] Create an abstract connection interface for dialects.
+- [ ] **SQL-001** Schema DDL — all `CREATE TABLE` + `CREATE INDEX` constants
+- [ ] **SQL-002** Connection Interface (`SqlConnection`, `Row`, `TransactionContext`)
+- [ ] **SQL-003** Base `SqlTemplateDataStore` abstract class — full `DataStorePort` implementation
 
 **Part B: Dialect Adapters**
-- [ ] Implement `packages/adapter-sqlite` (SQLite overrides, file/memory persistence via `better-sqlite3` and `sql.js`).
-- [ ] Write Integration test suite linking `engine` with `adapter-sqlite`.
-- [ ] Implement `packages/adapter-postgres` (Postgres overrides, connection pooling via `pg`).
-- [ ] Write Integration test suite linking `engine` with `adapter-postgres`.
+- [ ] **ADT-001** `packages/adapter-sqlite` — `SqliteConnection` + `SqliteDataStore` (via `better-sqlite3`)
+- [ ] **ADT-002** SQLite integration test suite (in-memory via `:memory:`)
+- [ ] **ADT-003** `packages/adapter-postgres` — `PostgresConnection` + `PostgresDataStore` (via `pg`)
+- [ ] **ADT-004** Postgres integration test suite (skipped when `POSTGRES_TEST_URL` unset)
 
 ---
 
