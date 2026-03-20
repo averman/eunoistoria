@@ -2,6 +2,8 @@ import { app, BrowserWindow, Menu } from 'electron';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { ProjectManager } from './project-manager';
+import { registerIpcHandlers } from './ipc/index';
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -10,6 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.env['ELECTRON_DISABLE_SANDBOX'] = 'true';
 
 let mainWindow: BrowserWindow | null = null;
+let projectManager: ProjectManager | null = null;
 
 const createWindow = (): void => {
   mainWindow = new BrowserWindow({
@@ -35,7 +38,12 @@ const createWindow = (): void => {
   });
 };
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  // Initialize ProjectManager before creating window
+  projectManager = new ProjectManager();
+  registerIpcHandlers(projectManager);
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

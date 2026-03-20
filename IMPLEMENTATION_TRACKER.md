@@ -83,7 +83,7 @@ Agents must mark items as `[x]` when verified complete, and track major mileston
 **Sub-tasks:**
 - [x] **PA-FIX** Fix `adapter-sqlite` `listDocuments` `titleContains` filter (prerequisite for omnisearch)
 - [x] **PA-001** Scaffold Electron + Vite + React + dependencies
-- [ ] **PA-002** Project lifecycle (new, open, save, save-as) + `.eunoistoria` file format
+- [x] **PA-002** Project lifecycle (new, open, save, save-as) + `.eunoistoria` file format
 - [ ] **PA-003** OmniSearch sidebar (title + alias search, results list)
 - [ ] **PA-004** Leaf editor (CodeMirror 6 markdown editor with autosave)
 - [ ] **PA-005** Composition canvas (visual workflow builder, [+] buttons, slot items, resolve)

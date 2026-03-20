@@ -15,7 +15,10 @@
     "@eunoistoria/adapter-sqlite": "workspace:*",
     "@eunoistoria/types": "workspace:*",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "zustand": "^4.4.0",
+    "archiver": "^7.0.0",
+    "unzipper": "^0.11.0"
   },
   "devDependencies": {
     "electron": "^34.0.0",
@@ -24,10 +27,11 @@
     "vite": "^5.4.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "@types/node": "^20.0.0",
     "tailwindcss": "^3.4.0",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
     "vitest": "^1.6.1",
-    "@types/node": "^20.0.0"
+    "@types/unzipper": "^0.10.0"
   }
 }
