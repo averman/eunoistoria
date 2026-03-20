@@ -1,7 +1,7 @@
 import {
   DocumentId, SelectionMap, AccessFilterPort, DataStorePort,
   Result, ResolutionError, DataStoreError,
-} from '@eunoistoria/types';
+} from '../../types/src/index';
 
 export const MAX_RECURSION_DEPTH = 20;
 

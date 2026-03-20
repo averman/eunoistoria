@@ -7,7 +7,7 @@ import {
   DataStorePort, 
   Result,
   DocumentError, SlotError, VariantGroupError, ValidationError,
-} from '@eunoistoria/types';
+} from '../../types/src/index';
 
 /**
  * ENG-005: Validation Module

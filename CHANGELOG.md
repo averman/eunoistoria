@@ -70,6 +70,41 @@ All notable changes to this project are documented here. Format: [Date] [Phase/C
 - **Unblocks:** PA-003 (OmniSearch), PA-004 (LeafEditor), PA-005 (Composition Canvas)
 - **Reference:** `docs/tasks/PA-002-WALKTHROUGH.md`
 
+### BUILD-001: Monorepo Source Bundling Architecture
+- **Type:** Infrastructure (Build System)
+- **Status:** ✅ Complete (PA-002 now runs in dev/preview mode)
+- **Changes:**
+  - Converted libraries (engine, adapter-sqlite, types, sql-template) from independently-built packages to source collections
+  - Removed build scripts, exports, and dist/ directories from library package.json files
+  - Updated tsconfig.base.json: `moduleResolution: "bundler"` + `module: "ESNext"` (for esbuild)
+  - Rewrote all cross-library imports: `@eunoistoria/*` → relative paths `../../library/src/index`
+  - Updated esbuild config: `bundle: true`, externalize only `electron` + `better-sqlite3`
+  - Created bootstrap wrapper (`out/main/bootstrap.cjs`) for NODE_PATH setup before require
+  - Fixed Vite config: `base: './'` for relative asset paths in file:// URLs (Electron compatibility)
+  - Fixed Electron path resolution: renderer HTML at `out/renderer/index.html`
+  - Added module path resolution in main process for external deps (better-sqlite3)
+  - Updated VS Code launch config: NODE_PATH injection, optimized for power-app-only builds
+- **Modified Files (20+):**
+  - Library package.json files: `packages/{engine,adapter-sqlite,types,sql-template}/package.json`
+  - Library imports: 11+ files in `engine/src`, 3 files in `adapter-sqlite/src`, 1 file in `sql-template/src`
+  - Power App imports: `src/main/{index.ts, project-manager.ts, engine.ts, ipc/*}`
+  - Build scripts: `scripts/build-main.js` (added bootstrap generation)
+  - Config files: `tsconfig.base.json`, `vite.config.ts`, `package.json`, `.vscode/run-power-app-preview.js`
+- **Key Files Created/Modified:**
+  - `scripts/build-main.js` — esbuild with bundle mode + bootstrap generation
+  - `out/main/bootstrap.cjs` — generated at build time (module path setup)
+  - `vite.config.ts` — relative asset paths for Electron
+  - `tsconfig.base.json` — bundler module resolution
+- **Outcome:**
+  - ✅ `pnpm build` compiles entire app stack in one pass (esbuild + Vite)
+  - ✅ `pnpm dev` watches main/preload with esbuild, renderer with Vite
+  - ✅ `pnpm preview` launches Electron app without errors
+  - ✅ Eliminates ESM/CJS interop issues
+  - ✅ Removes 127 files of dist/ cruft
+  - ✅ Simplifies dependency management
+- **Decision Reference:** DEC-025
+- **Architecture Benefit:** Single compilation context, direct source imports, native module resolution at boot time
+
 ---
 
 ## 2026-03-16 — Phase 3: Storage Layer with SQLite MVP (Complete)
@@ -139,13 +174,22 @@ All notable changes to this project are documented here. Format: [Date] [Phase/C
 
 ## Key Metrics
 
-| Phase | Tests | Status | Date |
-|---|---|---|---|
-| Phase 0 | — | ✅ | 2026-03-15 |
-| Phase 1 | — | ✅ | 2026-03-15 |
-| Phase 2 | 127 | ✅ | 2026-03-15 |
-| Phase 3 | 127 | ✅ | 2026-03-20 |
-| Phase 4a (PA-FIX) | 66 | ✅ | 2026-03-20 |
-| Phase 4a (PA-001) | 5 | ✅ | 2026-03-20 |
+| Phase | Component | Tests | Status | Date |
+|---|---|---|---|---|
+| Phase 0 | Scaffolding | — | ✅ | 2026-03-15 |
+| Phase 1 | Types | — | ✅ | 2026-03-15 |
+| Phase 2 | Engine | 127 | ✅ | 2026-03-15 |
+| Phase 3 | Storage | 127 | ✅ | 2026-03-20 |
+| Phase 4a | PA-FIX | 66 | ✅ | 2026-03-20 |
+| Phase 4a | PA-001 | 5 | ✅ | 2026-03-20 |
+| Phase 4a | PA-002 | 17 | ✅ | 2026-03-20 |
+| Phase 4a | BUILD-001 | — | ✅ | 2026-03-20 |
 
-**Total Tests Passing:** 325+ (across all completed phases and tasks)
+**Total Tests Passing:** 342+ (across all completed phases and tasks)
+
+## Build & Runtime Status
+
+- ✅ `pnpm build` — compiles monorepo with esbuild + Vite
+- ✅ `pnpm dev` — watch mode (esbuild + Vite with HMR)
+- ✅ `pnpm preview` — launches Electron app (main process + React renderer)
+- ✅ VS Code run config — automated build + preview via `.vscode/run-power-app-preview.js`

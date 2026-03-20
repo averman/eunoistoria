@@ -7,8 +7,8 @@ import {
   DocumentId, SlotId, VariantGroupId, PresetId, TagId,
   CreateDocumentInput, UpdateDocumentInput, DocumentFilters,
   DocumentRecord,
-} from '@eunoistoria/types';
-import { MigrationManager } from '@eunoistoria/sql-template';
+} from '../../types/src/index';
+import { MigrationManager } from '../../sql-template/src/index';
 import { SqliteConnection } from './connection.js';
 
 export class SqliteDataStore {

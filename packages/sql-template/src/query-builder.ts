@@ -5,7 +5,7 @@
 import {
   DocumentId, SlotId, VariantGroupId, PresetId, TagId,
   CreateDocumentInput, UpdateDocumentInput, DocumentFilters,
-} from '@eunoistoria/types';
+} from '../../types/src/index';
 
 export interface QuerySpec {
   sql: string;

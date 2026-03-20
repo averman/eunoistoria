@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { Readable } from 'stream';
 import archiver from 'archiver';
 import * as unzipper from 'unzipper';
 
@@ -115,7 +116,6 @@ export class FileFormat {
       // Extract from ZIP using unzipper
       return new Promise((resolve, reject) => {
         try {
-          const { Readable } = require('stream');
           const stream = Readable.from(zipBuffer);
 
           stream

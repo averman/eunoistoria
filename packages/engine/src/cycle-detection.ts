@@ -1,7 +1,7 @@
 import {
   DocumentId, DataStorePort,
   Result, ValidationError, DataStoreError,
-} from '@eunoistoria/types';
+} from '../../types/src/index';
 
 /**
  * ENG-004: Cycle Detection

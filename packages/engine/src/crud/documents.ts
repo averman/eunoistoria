@@ -2,7 +2,7 @@ import {
   DocumentId, DocumentRecord,
   CreateDocumentInput, UpdateDocumentInput, DocumentFilters,
   DataStorePort, Result, DocumentError, DataStoreError,
-} from '@eunoistoria/types';
+} from '../../../types/src/index';
 import { validateDocumentCreate, validateDocumentUpdate, validateConvertToComposition, validateConvertToLeaf } from '../validation.js';
 
 function mapStorageError(error: DataStoreError): DocumentError {

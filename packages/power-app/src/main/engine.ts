@@ -1,7 +1,15 @@
 import * as path from 'path';
-import { createEngine } from '@eunoistoria/engine';
-import { SqliteDataStore } from '@eunoistoria/adapter-sqlite';
-import type { Engine } from '@eunoistoria/types';
+import { createEngine } from '../../../engine/src/index';
+import { SqliteDataStore } from '../../../adapter-sqlite/src/index';
+import type { Engine, AccessFilterPort } from '../../../types/src/index';
+
+/**
+ * No-op AccessFilterPort for Power App
+ * Authors see all content without access restrictions
+ */
+const authorAccessFilter: AccessFilterPort = {
+  wouldExclude: async () => false,
+};
 
 /**
  * EngineManager handles lazy initialization of the engine singleton.
@@ -38,7 +46,7 @@ export class EngineManager {
     const dbPath = path.join(userDataPath, 'projects', projectUuid, 'db.sqlite');
 
     this.dataStore = new SqliteDataStore(dbPath);
-    this.engine = createEngine(this.dataStore);
+    this.engine = createEngine(this.dataStore, authorAccessFilter);
     this.currentProjectUuid = projectUuid;
 
     return this.engine;

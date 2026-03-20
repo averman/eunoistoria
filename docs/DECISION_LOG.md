@@ -230,3 +230,25 @@ Format:
 - **Rationale:** Aligns with game engine terminology (build/export). Clarifies that export ≠ normal save (which is automatic). Reduces user confusion about when to click save.
 - **Alternatives considered:** "Save" (confusing, implies working dir is not saved). "Save As" (implies overwriting, but export can create new file). "Publish" (too formal).
 - **Consequences:** Menu shows "Export Project" button, not "Save". Cmd+S (or Ctrl+S) triggers export. Users understand that closing the app without exporting doesn't lose work.
+
+### DEC-025 Monorepo Source Bundling: Direct Source Imports, Not Pre-Built Packages
+- **Date:** 2026-03-20
+- **Context:** Power App (PA-002+) needs to use engine, adapters, and types. Options: (a) build each library to dist/, then import dist/ in apps; (b) treat libraries as source collections, bundled at app build time; (c) ship libraries as npm packages.
+- **Decision:** Libraries (`engine`, `adapter-sqlite`, `types`, `sql-template`) are source collections only, not independently built. Power App's esbuild bundles all sources directly. Single build step per app (esbuild for main/preload, Vite for renderer).
+- **Rationale:**
+  - **Simpler architecture:** No dist/ directories, no build-libraries-first step. Libraries are just src folders.
+  - **Direct source imports:** `import { createEngine } from '../../../engine/src/index'` with esbuild handling compilation. TypeScript sources resolve natively.
+  - **Eliminates ESM/CJS interop:** esbuild compiles everything to CommonJS once, at app build time. No runtime module resolution issues.
+  - **Monorepo pattern:** Standard for Nx, Turborepo, Vite workspaces. Libraries are dev-time dependencies, not published packages.
+  - **Single compilation context:** esbuild sees the entire dependency graph at once, enabling tree-shaking and optimization.
+- **Alternatives considered:**
+  - Pre-built packages (`tsc -b` per library, then import dist/). Adds complexity: dist/ directories, version synchronization, build ordering.
+  - Publish as npm packages. Unnecessary for internal monorepo consumption; adds yak-shaving with versioning and npm publish.
+  - ESM output everywhere. Electron/Node ESM support is incomplete; CommonJS is safer for desktop apps.
+- **Consequences:**
+  - Libraries have no `build` script (only `test`). No `exports` field in package.json. `tsconfig` uses `moduleResolution: "bundler"` (for esbuild, not Node).
+  - All cross-library imports use relative paths: `@eunoistoria/*` → `../../library/src/index`.
+  - Power App (and later Reader App) each have one esbuild config that bundles all sources.
+  - Native modules (better-sqlite3) are externalized and resolved at runtime via NODE_PATH bootstrap.
+  - Tests still run in isolation (vitest against local src/, not bundled code).
+  - If a library ever needs external publication, add a `dist/` build step and publish script at that time (no refactoring needed).

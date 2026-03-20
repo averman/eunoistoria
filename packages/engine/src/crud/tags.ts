@@ -2,7 +2,7 @@ import {
   DocumentId, TagId,
   TagRecord,
   DataStorePort, Result, TagError, DataStoreError,
-} from '@eunoistoria/types';
+} from '../../../types/src/index';
 
 export async function assignTag(
   documentId: DocumentId,

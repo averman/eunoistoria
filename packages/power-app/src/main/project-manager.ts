@@ -3,7 +3,7 @@ import * as path from 'path';
 import { app, dialog } from 'electron';
 import { FileFormat } from './file-format';
 import { EngineManager } from './engine';
-import type { Engine } from '@eunoistoria/types';
+import type { Engine } from '../../../types/src/index';
 
 interface ProjectMetadata {
   name: string;
@@ -106,7 +106,7 @@ export class ProjectManager {
 
     // Initialize SQLite database with migrations
     const dbPath = path.join(projectDir, 'db.sqlite');
-    const sqliteDataStore = (await import('@eunoistoria/adapter-sqlite')).SqliteDataStore;
+    const sqliteDataStore = (await import('../../../adapter-sqlite/src/index')).SqliteDataStore;
     const store = new sqliteDataStore(dbPath);
 
     // Run migrations to initialize schema
@@ -187,7 +187,7 @@ export class ProjectManager {
     fs.writeFileSync(dbPath, sqliteBuffer);
 
     // Initialize SQLite connection to read project metadata
-    const sqliteDataStore = (await import('@eunoistoria/adapter-sqlite')).SqliteDataStore;
+    const sqliteDataStore = (await import('../../../adapter-sqlite/src/index')).SqliteDataStore;
     const store = new sqliteDataStore(dbPath);
 
     const now = new Date().toISOString();

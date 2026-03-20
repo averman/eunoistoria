@@ -1,6 +1,6 @@
 import {
   Premise, VariableMap, DocumentPredicate, QueryPlan,
-} from '@eunoistoria/types';
+} from '../../types/src/index';
 
 /**
  * ENG-007: Query Builder

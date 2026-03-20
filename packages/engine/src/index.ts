@@ -7,7 +7,7 @@ import {
   SelectionMap, VariableMap,
   ResolutionError,
   SlotRuleContext, Result,
-} from '@eunoistoria/types';
+} from '../../types/src/index';
 import { estimateTokens } from './token-estimation.js';
 import { evaluateRules } from './rule-evaluator.js';
 import { resolveTree } from './resolution.js';

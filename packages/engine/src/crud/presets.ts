@@ -3,7 +3,7 @@ import {
   PresetRecord, PresetRuleRecord, PresetAdHocDocumentRecord,
   CreatePresetInput, UpdatePresetInput, AddPresetRuleInput,
   DataStorePort, Result, PresetError, DataStoreError,
-} from '@eunoistoria/types';
+} from '../../../types/src/index';
 
 function mapStorageError(error: DataStoreError): PresetError {
   if (error === DataStoreError.NotFound) return PresetError.NotFound;

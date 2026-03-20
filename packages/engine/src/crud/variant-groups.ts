@@ -3,7 +3,7 @@ import {
   VariantGroupRecord, VariantGroupMemberRecord,
   CreateVariantGroupInput,
   DataStorePort, Result, VariantGroupError, DataStoreError,
-} from '@eunoistoria/types';
+} from '../../../types/src/index';
 import { validateMemberRemoval } from '../validation.js';
 
 function mapStorageError(error: DataStoreError): VariantGroupError {

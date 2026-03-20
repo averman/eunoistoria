@@ -6,7 +6,11 @@
       "Bash(npm run:*)",
       "Bash(npm rebuild:*)",
       "Bash(pnpm --filter @eunoistoria/adapter-sqlite test)",
-      "Bash(pnpm --filter @eunoistoria/power-app test)"
+      "Bash(pnpm --filter @eunoistoria/power-app test)",
+      "Bash(pnpm approve-builds:*)",
+      "Bash(pnpm rebuild:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm add:*)"
     ],
     "additionalDirectories": [
       "/Users/averman/.claude/plans"

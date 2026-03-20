@@ -1,15 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "outDir": "dist/main",
-    "types": ["node"]
+    "composite": false,
+    "rootDir": "src",
+    "outDir": "out",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "strict": false
   },
   "include": [
     "src/main/**/*",
-    "src/preload/**/*",
-    "electron.vite.config.ts"
+    "src/preload/**/*"
   ]
 }

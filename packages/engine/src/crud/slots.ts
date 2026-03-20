@@ -2,7 +2,7 @@ import {
   DocumentId, SlotId, CompositionSlot,
   CreateSlotInput,
   DataStorePort, Result, SlotError, DataStoreError,
-} from '@eunoistoria/types';
+} from '../../../types/src/index';
 import { wouldCreateCycle } from '../cycle-detection.js';
 import { validateSlotCreateInput } from '../validation.js';
 

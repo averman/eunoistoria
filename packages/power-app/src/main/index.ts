@@ -1,25 +1,29 @@
-import { app, BrowserWindow, Menu } from 'electron';
-import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
 import path from 'path';
+import { app, BrowserWindow, Menu } from 'electron';
 import { ProjectManager } from './project-manager';
 import { registerIpcHandlers } from './ipc/index';
 
-const require = createRequire(import.meta.url);
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Ensure Node can resolve external modules (better-sqlite3, etc) from workspace node_modules
+if (process.env.NODE_PATH) {
+  require('module').globalPaths.push(process.env.NODE_PATH);
+}
 
 // The built app should be safe to close for testing
 process.env['ELECTRON_DISABLE_SANDBOX'] = 'true';
 
-let mainWindow: BrowserWindow | null = null;
+let mainWindow: any = null;
 let projectManager: ProjectManager | null = null;
 
 const createWindow = (): void => {
+  const appDir = app.getAppPath();
+  const outPath = path.join(appDir, 'out');
+  const preloadPath = path.join(outPath, 'preload/index.cjs');
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
-      preload: path.join(__dirname, '../preload/index.js'),
+      preload: preloadPath,
       nodeIntegration: false,
       contextIsolation: true,
     },
@@ -30,7 +34,7 @@ const createWindow = (): void => {
     mainWindow.loadURL(isDev);
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+    mainWindow.loadFile(path.join(outPath, 'renderer/index.html'));
   }
 
   mainWindow.on('closed', () => {

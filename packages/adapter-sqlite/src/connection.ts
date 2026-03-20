@@ -3,7 +3,7 @@
  */
 
 import Database from 'better-sqlite3';
-import { SqlConnection, SqlRow } from '@eunoistoria/sql-template';
+import { SqlConnection, SqlRow } from '../../sql-template/src/index';
 
 export class SqliteConnection implements SqlConnection {
   private db: Database.Database | null = null;

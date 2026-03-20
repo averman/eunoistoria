@@ -1,7 +1,7 @@
 import {
   Rule, Premise, Operand, SortKey,
   Tag, SelectionMap, VariableMap, SlotRuleContext, DocumentId, SlotId,
-} from '@eunoistoria/types';
+} from '../../types/src/index';
 
 function coerce(v: unknown): number | string | boolean | unknown {
   if (typeof v === 'number') return v;

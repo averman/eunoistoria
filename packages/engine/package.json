@@ -1,11 +1,9 @@
 {
   "name": "@eunoistoria/engine",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
-  "main": "src/index.ts",
   "scripts": {
-    "build": "tsc -b",
-    "dev": "tsc -w",
     "test": "vitest run"
   },
   "dependencies": {

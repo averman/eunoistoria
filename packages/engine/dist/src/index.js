@@ -1,54 +1,18 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createEngine = createEngine;
-const types_1 = require("@eunoistoria/types");
-const token_estimation_js_1 = require("./token-estimation.js");
-const rule_evaluator_js_1 = require("./rule-evaluator.js");
-const resolution_js_1 = require("./resolution.js");
-const cycle_detection_js_1 = require("./cycle-detection.js");
-const validation_js_1 = require("./validation.js");
-const Documents = __importStar(require("./crud/documents.js"));
-const Slots = __importStar(require("./crud/slots.js"));
-const VariantGroups = __importStar(require("./crud/variant-groups.js"));
-const Tags = __importStar(require("./crud/tags.js"));
-const Presets = __importStar(require("./crud/presets.js"));
+import { ResolutionError, } from '@eunoistoria/types';
+import { estimateTokens } from './token-estimation.js';
+import { evaluateRules } from './rule-evaluator.js';
+import { resolveTree } from './resolution.js';
+import { wouldCreateCycle } from './cycle-detection.js';
+import { findBrokenReferences, validatePresetRules } from './validation.js';
+import * as Documents from './crud/documents.js';
+import * as Slots from './crud/slots.js';
+import * as VariantGroups from './crud/variant-groups.js';
+import * as Tags from './crud/tags.js';
+import * as Presets from './crud/presets.js';
 async function collectSlotContexts(compositionId, dataStore) {
     const docResult = await dataStore.getDocument(compositionId);
     if (!docResult.ok) {
-        return { ok: false, error: types_1.ResolutionError.PresetNotFound };
+        return { ok: false, error: ResolutionError.PresetNotFound };
     }
     if (docResult.value.type === 'leaf')
         return { ok: true, value: [] };
@@ -92,7 +56,7 @@ async function collectSlotContexts(compositionId, dataStore) {
     }
     return { ok: true, value: contexts };
 }
-function createEngine(dataStore, accessFilter) {
+export function createEngine(dataStore, accessFilter) {
     return {
         documents: {
             create: (input) => Documents.createDocument(input, dataStore),
@@ -139,25 +103,25 @@ function createEngine(dataStore, accessFilter) {
             async evaluateRules(presetId, variables) {
                 const presetResult = await dataStore.getPreset(presetId);
                 if (!presetResult.ok)
-                    return { ok: false, error: types_1.ResolutionError.PresetNotFound };
+                    return { ok: false, error: ResolutionError.PresetNotFound };
                 const slotContextsResult = await collectSlotContexts(presetResult.value.baseCompositionId, dataStore);
                 if (!slotContextsResult.ok)
                     return slotContextsResult;
-                const selectionMap = (0, rule_evaluator_js_1.evaluateRules)(presetResult.value.rules, variables, slotContextsResult.value);
+                const selectionMap = evaluateRules(presetResult.value.rules, variables, slotContextsResult.value);
                 return { ok: true, value: selectionMap };
             },
             async resolve(presetId, variables, selectionMap) {
                 const presetResult = await dataStore.getPreset(presetId);
                 if (!presetResult.ok)
-                    return { ok: false, error: types_1.ResolutionError.PresetNotFound };
-                const mainResult = await (0, resolution_js_1.resolveTree)(presetResult.value.baseCompositionId, selectionMap, accessFilter, dataStore, 0);
+                    return { ok: false, error: ResolutionError.PresetNotFound };
+                const mainResult = await resolveTree(presetResult.value.baseCompositionId, selectionMap, accessFilter, dataStore, 0);
                 if (!mainResult.ok)
                     return mainResult;
                 const parts = [];
                 if (mainResult.value !== '')
                     parts.push(mainResult.value);
                 for (const adHocDocId of presetResult.value.adHocDocuments) {
-                    const adHocResult = await (0, resolution_js_1.resolveTree)(adHocDocId, selectionMap, accessFilter, dataStore, 0);
+                    const adHocResult = await resolveTree(adHocDocId, selectionMap, accessFilter, dataStore, 0);
                     if (!adHocResult.ok)
                         return adHocResult;
                     if (adHocResult.value !== '')
@@ -167,21 +131,21 @@ function createEngine(dataStore, accessFilter) {
             },
             async resolveComposition(compositionId) {
                 const defaultSelectionMap = { toggleStates: new Map(), sortOrders: new Map() };
-                return (0, resolution_js_1.resolveTree)(compositionId, defaultSelectionMap, accessFilter, dataStore, 0);
+                return resolveTree(compositionId, defaultSelectionMap, accessFilter, dataStore, 0);
             },
             estimateTokens(content) {
-                return (0, token_estimation_js_1.estimateTokens)(content);
+                return estimateTokens(content);
             },
         },
         validation: {
             async wouldCreateCycle(compositionId, targetDocumentId) {
-                return (0, cycle_detection_js_1.wouldCreateCycle)(compositionId, targetDocumentId, dataStore);
+                return wouldCreateCycle(compositionId, targetDocumentId, dataStore);
             },
             async validatePresetRules(presetId) {
-                return (0, validation_js_1.validatePresetRules)(presetId, dataStore);
+                return validatePresetRules(presetId, dataStore);
             },
             async findBrokenReferences(projectId) {
-                return (0, validation_js_1.findBrokenReferences)(projectId, dataStore);
+                return findBrokenReferences(projectId, dataStore);
             },
         },
     };
