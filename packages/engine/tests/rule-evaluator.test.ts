@@ -1,8 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { evaluateRules } from '../src/rule-evaluator.js';
-import { createMockDataStore } from './helpers/mock-data-store.js';
 import {
-  DataStorePort, DocumentId, SlotId, VariantGroupId,
+  DocumentId, SlotId,
   SlotRuleContext, VariantMemberContext, Tag, VariableMap,
 } from '@eunoistoria/types';
 
@@ -40,8 +39,8 @@ describe('ENG-003: Rule Evaluator', () => {
       { id: 'd2', tags: [] },
     ]);
     const result = evaluateRules([], new Map(), [slot1, slot2]);
-    expect(result.toggleStates.get('s1')).toBe(true);
-    expect(result.sortOrders.get('s2')).toEqual([makeDocId('d1'), makeDocId('d2')]);
+    expect(result.toggleStates.get(makeSlotId('s1'))).toBe(true);
+    expect(result.sortOrders.get(makeSlotId('s2'))).toEqual([makeDocId('d1'), makeDocId('d2')]);
   });
 
   it('TC-003-02: toggle_off with variable-only true premise toggles all slots off', () => {
@@ -51,8 +50,8 @@ describe('ENG-003: Rule Evaluator', () => {
       new Map(),
       slots
     );
-    expect(result.toggleStates.get('s1')).toBe(false);
-    expect(result.toggleStates.get('s2')).toBe(false);
+    expect(result.toggleStates.get(makeSlotId('s1'))).toBe(false);
+    expect(result.toggleStates.get(makeSlotId('s2'))).toBe(false);
   });
 
   it('TC-003-03: toggle_off with variable-only false premise toggles no slots', () => {
@@ -66,7 +65,7 @@ describe('ENG-003: Rule Evaluator', () => {
       variables,
       slots
     );
-    expect(result.toggleStates.get('s1')).toBe(true);
+    expect(result.toggleStates.get(makeSlotId('s1'))).toBe(true);
   });
 
   it('TC-003-04: toggle_off with tag premise only toggles matching slots', () => {
@@ -80,8 +79,8 @@ describe('ENG-003: Rule Evaluator', () => {
       new Map(),
       [slot1, slot2]
     );
-    expect(result.toggleStates.get('s1')).toBe(false);
-    expect(result.toggleStates.get('s2')).toBe(true);
+    expect(result.toggleStates.get(makeSlotId('s1'))).toBe(false);
+    expect(result.toggleStates.get(makeSlotId('s2'))).toBe(true);
   });
 
   it('TC-003-05: sort_by with literal value reorders members', () => {
@@ -103,7 +102,7 @@ describe('ENG-003: Rule Evaluator', () => {
       new Map(),
       [slot]
     );
-    expect(result.sortOrders.get('s1')).toEqual([makeDocId('fanfic-B'), makeDocId('fanfic-A')]);
+    expect(result.sortOrders.get(makeSlotId('s1'))).toEqual([makeDocId('fanfic-B'), makeDocId('fanfic-A')]);
   });
 
   it('TC-003-06: sort_by with matchVar uses variable value', () => {
@@ -120,7 +119,7 @@ describe('ENG-003: Rule Evaluator', () => {
       variables,
       [slot]
     );
-    expect(result.sortOrders.get('s1')).toEqual([makeDocId('ja-doc'), makeDocId('en-doc')]);
+    expect(result.sortOrders.get(makeSlotId('s1'))).toEqual([makeDocId('ja-doc'), makeDocId('en-doc')]);
   });
 
   it('TC-003-07: select action sorts matching member first', () => {
@@ -137,7 +136,7 @@ describe('ENG-003: Rule Evaluator', () => {
       new Map(),
       [slot]
     );
-    const order = result.sortOrders.get('s1');
+    const order = result.sortOrders.get(makeSlotId('s1'));
     expect(order?.[0]).toBe(makeDocId('chapter-doc'));
     expect(order?.[1]).toBe(makeDocId('arc-doc'));
     expect(order?.[2]).toBe(makeDocId('no-tag-doc'));
@@ -153,7 +152,7 @@ describe('ENG-003: Rule Evaluator', () => {
       new Map(),
       [slot]
     );
-    expect(result.toggleStates.get('s1')).toBe(true);
+    expect(result.toggleStates.get(makeSlotId('s1'))).toBe(true);
   });
 
   it('TC-003-09: missing tag returns false — slot stays toggled on', () => {
@@ -166,7 +165,7 @@ describe('ENG-003: Rule Evaluator', () => {
       new Map(),
       [slot]
     );
-    expect(result.toggleStates.get('s1')).toBe(true);
+    expect(result.toggleStates.get(makeSlotId('s1'))).toBe(true);
   });
 
   it('TC-003-10: numeric comparison toggles off chapter:9 but not chapter:10', () => {
@@ -180,8 +179,8 @@ describe('ENG-003: Rule Evaluator', () => {
       new Map(),
       [slot9, slot10]
     );
-    expect(result.toggleStates.get('s9')).toBe(false);
-    expect(result.toggleStates.get('s10')).toBe(true);
+    expect(result.toggleStates.get(makeSlotId('s9'))).toBe(false);
+    expect(result.toggleStates.get(makeSlotId('s10'))).toBe(true);
   });
 
   it('TC-003-11: string fallback type coercion — "prologue" < 103 is false (string comparison)', () => {
@@ -196,7 +195,7 @@ describe('ENG-003: Rule Evaluator', () => {
     );
     // "prologue" does not parse as number, 103 parses as number, so not both numeric → string comparison
     // String("prologue") < String(103) = "prologue" < "103" — in JS string comparison, "p" > "1", so false
-    expect(result.toggleStates.get('s1')).toBe(true);
+    expect(result.toggleStates.get(makeSlotId('s1'))).toBe(true);
   });
 
   it('TC-003-12: not premise — slot stays toggled on (premise = not(eq(lang, en)) = false)', () => {
@@ -216,6 +215,6 @@ describe('ENG-003: Rule Evaluator', () => {
       new Map(),
       [slot]
     );
-    expect(result.toggleStates.get('s1')).toBe(true);
+    expect(result.toggleStates.get(makeSlotId('s1'))).toBe(true);
   });
 });

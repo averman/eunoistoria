@@ -50,21 +50,27 @@ Agents must mark items as `[x]` when verified complete, and track major mileston
 
 ---
 
-## ⏳ Phase 3: Storage Layer
-*Database interaction through the `DataStorePort`.*
+## ✅ Phase 3: Storage Layer (SQLite MVP)
+*Database interaction through the `DataStorePort`. Postgres deferred to Phase 5.*
 
-*Full task specs: `docs/tasks/SQL-001` through `ADT-004` (see `docs/TASK_BREAKDOWN_P2_P3.md` for overview).*
+*Full task specs: `docs/tasks/SQL-001` through `ADT-002` completed.*
 
-**Part A: `packages/sql-template`**
-- [ ] **SQL-001** Schema DDL — all `CREATE TABLE` + `CREATE INDEX` constants
-- [ ] **SQL-002** Connection Interface (`SqlConnection`, `Row`, `TransactionContext`)
-- [ ] **SQL-003** Base `SqlTemplateDataStore` abstract class — full `DataStorePort` implementation
+**Part A: `packages/sql-template`** ✅
+- [x] **SQL-001** Schema DDL — all 9 `CREATE TABLE` + indexes + constraints
+- [x] **SQL-002** Connection Interface (`SqlConnection` abstract, `Row`, Transaction support)
+- [x] **SQL-003** Query Builder — 30+ parameterized SQL templates (SQLite/Postgres compatible)
+- [x] **SQL-004** Migration System — versioned schema migrations with rollback
+- [x] **SQL-005** Full test suite — 66 tests (schema, queries, migrations, connection)
 
-**Part B: Dialect Adapters**
-- [ ] **ADT-001** `packages/adapter-sqlite` — `SqliteConnection` + `SqliteDataStore` (via `better-sqlite3`)
-- [ ] **ADT-002** SQLite integration test suite (in-memory via `:memory:`)
-- [ ] **ADT-003** `packages/adapter-postgres` — `PostgresConnection` + `PostgresDataStore` (via `pg`)
-- [ ] **ADT-004** Postgres integration test suite (skipped when `POSTGRES_TEST_URL` unset)
+**Part B: SQLite Adapter** ✅
+- [x] **ADT-001** `packages/adapter-sqlite` — `SqliteConnection` + `SqliteDataStore` (via `better-sqlite3`)
+- [x] **ADT-002** Full test suite — 61 tests (connection, data store, integration workflows)
+- [x] **ADT-003** Index API exports (`src/index.ts`)
+- [x] **ADT-004** Type declarations and dependency management (`package.json`, `@types/better-sqlite3`)
+
+**Part C: Postgres Adapter** (Deferred to Phase 5)
+- [ ] **ADT-005** `packages/adapter-postgres` — PostgresConnection + PostgresDataStore
+- [ ] **ADT-006** Postgres integration test suite
 
 ---
 

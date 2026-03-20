@@ -126,3 +126,27 @@ Format:
 - **Rationale:** A Hexagonal Architecture demands a pure core domain. If the Engine includes SQL foreign keys or table join constructs in its logical evaluation memory, it breaks the separation of concerns. Data Adapters are strictly responsible for doing the SQL JOINs to build and hydrate these topological `DataDocument` trees before sending them to the Engine.
 - **Alternatives considered:** 1:1 ERD mapping (SQL-like DTOs). Rejected because it requires the Engine to understand relational lookups and boolean discriminators instead of just evaluating trees natively.
 - **Consequences:** Adapters bear the burden of translating relational tables into AST structures. Engine types can safely use TypeScript string literals for dispatch without caring how they are stored.
+
+### DEC-012 Phase 3 MVP: SQLite Only, Postgres Deferred to Phase 5
+- **Date:** 2026-03-20
+- **Context:** Phase 3 includes both storage adapters (SQLite and Postgres). Scope question: build both in parallel or sequence?
+- **Decision:** Build SQLite only for Phase 3 (MVP). Defer Postgres to Phase 5 (Reader App phase). Phase 4 (Power App) unblocks immediately with SQLite support.
+- **Rationale:** Power App MVP only needs local-first storage. SQLite alone unblocks Power App development. Postgres is a future-proof design choice already baked into the architecture; deferring it doesn't paint us into a corner. Reader App (Phase 5) naturally maps to Postgres. Focusing on one implementation reduces Phase 3 scope and accelerates MVP delivery.
+- **Alternatives considered:** Build both in parallel (adds ~20-30 hours to Phase 3). Build Postgres first (doesn't unblock Power App).
+- **Consequences:** `packages/adapter-postgres` remains scaffolded but unimplemented. Phase 5 task is to implement Postgres by cloning/adapting the sqlite adapter. `packages/sql-template` is fully agnostic (parameterized with `?` for SQLite, supports `$n` for Postgres via configuration).
+
+### DEC-013 SQLite Adapter: better-sqlite3 Over sql.js
+- **Date:** 2026-03-20
+- **Context:** Two mature SQLite options for Node: `better-sqlite3` (native binding, synchronous) and `sql.js` (WASM, purely JS).
+- **Decision:** Use `better-sqlite3` for Power App development.
+- **Rationale:** `better-sqlite3` offers native performance and simpler semantics (sync API). WASM (`sql.js`) is useful for testing (in-memory, no I/O), but production Power App benefits from native speed. The adapter can support both via a connection abstraction; tests use `:memory:` with `better-sqlite3`.
+- **Alternatives considered:** sql.js only (portability, pure JS); hybrid (better-sqlite3 for desktop, sql.js for testing).
+- **Consequences:** Phase 3 uses `better-sqlite3`. Tests run against in-memory SQLite. Future work: add optional sql.js variant for cross-platform browser-based testing.
+
+### DEC-014 ID Generation: Timestamp + Random Suffix, Not UUIDs (v1 MVP)
+- **Date:** 2026-03-20
+- **Context:** Eunoistoria entities (documents, slots, etc.) need globally unique IDs. Options: UUIDs (standard), timestamps, snowflakes, database auto-increment, or application-generated.
+- **Decision:** For Phase 3 MVP: timestamp (milliseconds) + random suffix. Format: `doc_${Date.now()}_${random9chars}`. Upgrade to UUIDs for Phase 5 / production.
+- **Rationale:** Timestamps are human-readable in logs and databases (useful for debugging). Random suffix prevents collisions in the rare case of simultaneous creation. No additional dependencies. Simple to understand and trace. Fine for the local-first MVP.
+- **Alternatives considered:** UUIDs v4 (standard but unreadable). Snowflakes (adds complexity). Database sequence IDs (couples application to SQL schema). NanoID (adds dependency).
+- **Consequences:** IDs are 28-char strings, not 36-char UUIDs. Logs are more readable. For Reader App (Phase 5) with potential horizontal scaling, UUIDs should be adopted. Migration path: generate UUIDs on export, or re-ID at phase boundary.

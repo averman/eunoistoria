@@ -1,6 +1,6 @@
 import {
-  Rule, Premise, Operand, Action, SortKey,
-  Tag, SelectionMap, VariableMap, SlotRuleContext, DocumentId,
+  Rule, Premise, Operand, SortKey,
+  Tag, SelectionMap, VariableMap, SlotRuleContext, DocumentId, SlotId,
 } from '@eunoistoria/types';
 
 function coerce(v: unknown): number | string | boolean | unknown {
@@ -150,17 +150,17 @@ export function evaluateRules(
   variables: VariableMap,
   slotContexts: SlotRuleContext[]
 ): SelectionMap {
-  const toggleStates = new Map<string, boolean>();
-  const sortOrders = new Map<string, DocumentId[]>();
+  const toggleStates = new Map<SlotId, boolean>();
+  const sortOrders = new Map<SlotId, DocumentId[]>();
 
   // Initialize toggleStates (all true) and sortOrders (by original memberOrder)
   for (const slot of slotContexts) {
-    toggleStates.set(slot.slotId, true);
+    toggleStates.set(slot.slotId as SlotId, true);
     if (slot.referenceType === 'variant_group') {
       const sorted = [...slot.variantGroupMembers]
         .sort((a, b) => a.memberOrder - b.memberOrder)
         .map(m => m.documentId);
-      sortOrders.set(slot.slotId, sorted);
+      sortOrders.set(slot.slotId as SlotId, sorted);
     }
   }
 
@@ -174,35 +174,38 @@ export function evaluateRules(
         const fires = evaluatePremise(premise, [], variables);
         if (fires) {
           for (const slot of slotContexts) {
-            toggleStates.set(slot.slotId, toggleValue);
+            toggleStates.set(slot.slotId as SlotId, toggleValue);
           }
         }
       } else {
         for (const slot of slotContexts) {
           const fires = evaluatePremise(premise, slot.documentTags, variables);
           if (fires) {
-            toggleStates.set(slot.slotId, toggleValue);
+            toggleStates.set(slot.slotId as SlotId, toggleValue);
           }
         }
       }
     } else if (action.type === 'sort_by') {
+      // Sort action: reorders variant group members by preference.
+      // Premise determines if the rule FIRES for this slot.
+      // Sort keys determine the order preference for members.
       const sortKeys = action.sortKeys;
       for (const slot of slotContexts) {
         if (slot.referenceType !== 'variant_group') continue;
+
+        // Check if the rule fires for this slot (variable-only or tag-based).
+        // For tag-based premises, we evaluate against the default member (position 0) tags.
         if (isVarOnly) {
           const fires = evaluatePremise(premise, [], variables);
           if (!fires) continue;
-        }
-        // For tag-based premises in sort_by, the premise fires if slot.documentTags (default member) matches
-        // Actually, for sort_by with tag premises, we evaluate premise per member to determine sort priority
-        // The premise here determines if the rule FIRES for this slot at all
-        // When premise references tags: evaluate against slot.documentTags (default member tags)
-        if (!isVarOnly) {
+        } else {
           const fires = evaluatePremise(premise, slot.documentTags, variables);
           if (!fires) continue;
         }
+
+        // Rule fires: reorder this slot's members by sort keys.
         const sorted = sortMembersByKeys(slot.variantGroupMembers, sortKeys, variables);
-        sortOrders.set(slot.slotId, sorted);
+        sortOrders.set(slot.slotId as SlotId, sorted);
       }
     } else if (action.type === 'select') {
       // Treat as sort_by with a single sort key
@@ -217,7 +220,7 @@ export function evaluateRules(
           if (!fires) continue;
         }
         const sorted = sortMembersByKeys(slot.variantGroupMembers, sortKeys, variables);
-        sortOrders.set(slot.slotId, sorted);
+        sortOrders.set(slot.slotId as SlotId, sorted);
       }
     }
   }

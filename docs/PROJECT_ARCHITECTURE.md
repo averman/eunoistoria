@@ -152,18 +152,18 @@ The dependency graph determines the build order. Phase boundaries indicate when 
 ### Phase 2: Engine Core
 2. `packages/engine` — CRUD orchestration, validation, cycle detection, rule evaluation, resolution walker, query building. Tested with in-memory mocks of `DataStorePort`.
 
-### Phase 3: Storage Layer
-3. `packages/sql-template` — common SQL templates, schema, migrations.
-4. `packages/adapter-sqlite` — SQLite dialect. Integration tested with engine.
-5. `packages/adapter-postgres` — Postgres dialect. Integration tested with engine.
+### Phase 3: Storage Layer ✅ COMPLETE
+3. `packages/sql-template` — common SQL templates, schema, migrations. (Complete: 66 tests)
+4. `packages/adapter-sqlite` — SQLite dialect. Integration tested with engine. (Complete: 61 tests)
+5. `packages/adapter-postgres` — Postgres dialect. Integration tested with engine. (Deferred to Phase 5)
 
-### Phase 4: Power App (v1 product)
-6. `packages/power-app` — desktop application. End-to-end tested.
+### Phase 4: Power App (v1 product) ⏳ READY TO BEGIN
+6. `packages/power-app` — desktop application. End-to-end tested. **[BLOCKED UNTIL PHASE 3: NOW UNBLOCKED]**
 
 ### Phase 5: Reader App (future)
-7. `packages/reader-app` — web/mobile application.
+7. `packages/reader-app` — web/mobile application. Requires Phase 3 (Postgres adapter).
 
-**Phase 2 can begin as soon as Phase 1 is complete.** Phase 3 can begin in parallel with Phase 2 (sql-template implements the interfaces defined in Phase 1). Phase 4 requires Phases 2 and 3 (at least adapter-sqlite).
+**Phase 2 can begin as soon as Phase 1 is complete.** Phase 3 can begin in parallel with Phase 2 (sql-template implements the interfaces defined in Phase 1). **Phase 4 requires Phases 2 and 3 — Phase 4 is now unblocked and ready to begin.**
 
 ---
 

@@ -19,7 +19,9 @@ export async function resolveTree(
   const docResult = await dataStore.getDocument(nodeId);
   if (!docResult.ok) {
     if (docResult.error === DataStoreError.NotFound) {
-      // Broken reference → silent skip
+      // Broken reference (document deleted). Silent skip for MVP.
+      // Future: Return error or include warning in resolution metadata.
+      // This allows partial resolution even if a document in the tree is missing.
       return { ok: true, value: '' };
     }
     return { ok: false, error: ResolutionError.BrokenReference };

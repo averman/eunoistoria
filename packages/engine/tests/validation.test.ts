@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createMockDataStore } from './helpers/mock-data-store.js';
 import {
-  validateDocumentCreate, validateDocumentUpdate, validateConvertToLeaf,
+  validateDocumentCreate, validateConvertToLeaf,
   validateMemberRemoval, findBrokenReferences, validatePresetRules,
 } from '../src/validation.js';
 import {
   DataStorePort, DocumentId, DocumentRecord, VariantGroupMemberRecord,
-  DocumentError, VariantGroupError, ValidationError,
+  DocumentError, VariantGroupError,
 } from '@eunoistoria/types';
 
 function makeRecord(overrides: Partial<DocumentRecord> = {}): DocumentRecord {
@@ -118,7 +118,8 @@ describe('ENG-005: Validation Module', () => {
 
   it('TC-005-11: validatePresetRules with sort_by and no variant_group slots returns issue', async () => {
     const comp = await store.createDocument({ projectId: 'proj1', title: 'Comp', isComposition: true });
-    const preset = await store.createPreset({ projectId: 'proj1', name: 'P', compositionId: comp.value!.id });
+    if (!comp.ok) return;
+    const preset = await store.createPreset({ projectId: 'proj1', name: 'P', compositionId: comp.value.id });
     if (!preset.ok) return;
 
     await store.addPresetRule(preset.value.id, {
@@ -135,7 +136,8 @@ describe('ENG-005: Validation Module', () => {
 
   it('TC-005-12: validatePresetRules with only toggle rules returns isValid: true', async () => {
     const comp = await store.createDocument({ projectId: 'proj1', title: 'Comp', isComposition: true });
-    const preset = await store.createPreset({ projectId: 'proj1', name: 'P', compositionId: comp.value!.id });
+    if (!comp.ok) return;
+    const preset = await store.createPreset({ projectId: 'proj1', name: 'P', compositionId: comp.value.id });
     if (!preset.ok) return;
 
     await store.addPresetRule(preset.value.id, { premise: { op: 'true' }, action: { type: 'toggle_off' } });

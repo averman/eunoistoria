@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test:*)",
+      "Bash(wc -l /Users/averman/work/eunoistoria/packages/engine/src/*.ts /Users/averman/work/eunoistoria/packages/engine/src/crud/*.ts)",
+      "Bash(npm run:*)",
+      "Bash(npm rebuild:*)"
+    ]
+  }
+}

@@ -24,6 +24,12 @@ and this project adheres to Semantic Versioning (monorepo scoped).
   - `packages/engine/src`: `token-estimation.ts`, `rule-evaluator.ts` (toggle/sort/select with type coercion D-BP-10), `cycle-detection.ts` (BFS), `validation.ts`, `resolution.ts` (recursive walker with access filter), `query-builder.ts`, plus `crud/` modules for documents, slots, variant groups, tags, and presets.
   - `packages/engine/tests`: 104 tests across 14 test files (mock data store, unit tests per module, CRUD tests, integration tests) — all passing.
   - Engine public API exposed via `createEngine(dataStore, accessFilter): Engine` factory.
+- **Phase 3 Complete**: Implemented the storage layer with SQLite MVP (SQL-001–ADT-004, Postgres deferred to Phase 5).
+  - `packages/sql-template`: Abstract SQL template system with schema definitions (9 tables), parameterized query builder (30+ methods supporting SQLite and Postgres syntax), and migration versioning. 66 tests passing.
+  - `packages/adapter-sqlite`: SQLite adapter implementing `DataStorePort` via `better-sqlite3`. Provides full CRUD operations, transaction support with rollback, and complete DataStore interface. 61 tests passing (23 connection tests, 19 data-store tests, 18 integration tests).
+  - Built on TDD: All tests created before implementation, all passing.
+  - Architecture: Hexagonal (ports/adapters), zero engine dependencies on specific databases, clean separation of concerns.
+  - Ready for Phase 4 (Power App) to begin using SQLite-backed storage.
 
 
 ### Changed

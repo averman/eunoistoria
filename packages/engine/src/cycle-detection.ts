@@ -1,6 +1,6 @@
 import {
   DocumentId, DataStorePort,
-  Result, ValidationError,
+  Result, ValidationError, DataStoreError,
 } from '@eunoistoria/types';
 
 /**
@@ -54,7 +54,7 @@ export async function wouldCreateCycle(
         const docResult = await dataStore.getDocumentRecord(slot.referenceDocumentId);
         if (docResult.ok && docResult.value.isComposition) {
           queue.push(slot.referenceDocumentId);
-        } else if (!docResult.ok && docResult.error !== /* DataStoreError.NotFound */ 'NotFound') {
+        } else if (!docResult.ok && docResult.error !== DataStoreError.NotFound) {
           return { ok: false, error: ValidationError.StorageFailure };
         }
       } else if (slot.referenceType === 'variant_group' && slot.referenceVariantGroupId !== undefined) {
@@ -66,7 +66,7 @@ export async function wouldCreateCycle(
           const memberDocResult = await dataStore.getDocumentRecord(memberId);
           if (memberDocResult.ok && memberDocResult.value.isComposition) {
             queue.push(memberId);
-          } else if (!memberDocResult.ok && memberDocResult.error !== 'NotFound') {
+          } else if (!memberDocResult.ok && memberDocResult.error !== DataStoreError.NotFound) {
             return { ok: false, error: ValidationError.StorageFailure };
           }
         }

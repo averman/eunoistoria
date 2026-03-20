@@ -5,8 +5,8 @@ import {
   CreateSlotInput, CreateVariantGroupInput, CreatePresetInput,
   UpdatePresetInput, AddPresetRuleInput,
   SelectionMap, VariableMap,
-  ResolutionError, ValidationError,
-  SlotRuleContext, DocumentId as _DocumentId,
+  ResolutionError,
+  SlotRuleContext, Result,
 } from '@eunoistoria/types';
 import { estimateTokens } from './token-estimation.js';
 import { evaluateRules } from './rule-evaluator.js';
@@ -22,9 +22,12 @@ import * as Presets from './crud/presets.js';
 async function collectSlotContexts(
   compositionId: DocumentId,
   dataStore: DataStorePort
-): Promise<SlotRuleContext[]> {
+): Promise<Result<SlotRuleContext[], ResolutionError>> {
   const docResult = await dataStore.getDocument(compositionId);
-  if (!docResult.ok || docResult.value.type === 'leaf') return [];
+  if (!docResult.ok) {
+    return { ok: false, error: ResolutionError.PresetNotFound };
+  }
+  if (docResult.value.type === 'leaf') return { ok: true, value: [] };
 
   const contexts: SlotRuleContext[] = [];
 
@@ -39,8 +42,9 @@ async function collectSlotContexts(
         variantGroupMembers: [],
       });
       if (refDocResult.ok && refDocResult.value.type === 'composition') {
-        const nested = await collectSlotContexts(slot.referenceDocumentId, dataStore);
-        contexts.push(...nested);
+        const nestedResult = await collectSlotContexts(slot.referenceDocumentId, dataStore);
+        if (!nestedResult.ok) return nestedResult;
+        contexts.push(...nestedResult.value);
       }
     } else if (slot.referenceType === 'variant_group' && slot.referenceVariantGroupId !== undefined) {
       const memberIdsResult = await dataStore.getVariantGroupMembers(slot.referenceVariantGroupId);
@@ -65,7 +69,7 @@ async function collectSlotContexts(
     }
   }
 
-  return contexts;
+  return { ok: true, value: contexts };
 }
 
 export function createEngine(dataStore: DataStorePort, accessFilter: AccessFilterPort): Engine {
@@ -121,8 +125,9 @@ export function createEngine(dataStore: DataStorePort, accessFilter: AccessFilte
         const presetResult = await dataStore.getPreset(presetId);
         if (!presetResult.ok) return { ok: false, error: ResolutionError.PresetNotFound };
 
-        const slotContexts = await collectSlotContexts(presetResult.value.baseCompositionId, dataStore);
-        const selectionMap = evaluateRules(presetResult.value.rules, variables, slotContexts);
+        const slotContextsResult = await collectSlotContexts(presetResult.value.baseCompositionId, dataStore);
+        if (!slotContextsResult.ok) return slotContextsResult;
+        const selectionMap = evaluateRules(presetResult.value.rules, variables, slotContextsResult.value);
         return { ok: true, value: selectionMap };
       },
 
