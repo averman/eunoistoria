@@ -20,6 +20,134 @@ describe('SQLite Adapter: DataStore', () => {
     await store.close();
   });
 
+  describe('listDocuments titleContains filter', () => {
+    it('TC-FIX-01: titleContains searches title field (case-insensitive)', async () => {
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Chapter 1',
+        isComposition: false,
+        content: 'Content A',
+      });
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Introduction',
+        isComposition: false,
+        content: 'Content B',
+      });
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Chapter 2',
+        isComposition: false,
+        content: 'Content C',
+      });
+
+      const result = await store.listDocuments('proj1', { titleContains: 'chapter' });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toHaveLength(2);
+        expect(result.value.map(d => d.title)).toContain('Chapter 1');
+        expect(result.value.map(d => d.title)).toContain('Chapter 2');
+        expect(result.value.map(d => d.title)).not.toContain('Introduction');
+      }
+    });
+
+    it('TC-FIX-02: titleContains searches alias field', async () => {
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Doc A',
+        alias: 'ch1, scene1',
+        isComposition: false,
+        content: 'Content A',
+      });
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Doc B',
+        alias: 'intro, opening',
+        isComposition: false,
+        content: 'Content B',
+      });
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Doc C',
+        alias: 'ch2, scene2',
+        isComposition: false,
+        content: 'Content C',
+      });
+
+      const result = await store.listDocuments('proj1', { titleContains: 'scene' });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toHaveLength(2);
+        expect(result.value.map(d => d.alias)).toContain('ch1, scene1');
+        expect(result.value.map(d => d.alias)).toContain('ch2, scene2');
+      }
+    });
+
+    it('TC-FIX-03: titleContains combined with isComposition filter', async () => {
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Chapter 1',
+        isComposition: false,
+        content: 'Content',
+      });
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Chapter Book',
+        isComposition: true,
+      });
+
+      const result = await store.listDocuments('proj1', {
+        titleContains: 'chapter',
+        isComposition: false,
+      });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toHaveLength(1);
+        expect(result.value[0].title).toBe('Chapter 1');
+        expect(result.value[0].isComposition).toBe(false);
+      }
+    });
+
+    it('TC-FIX-04: titleContains with no matches returns empty array', async () => {
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Chapter 1',
+        isComposition: false,
+        content: 'Content',
+      });
+
+      const result = await store.listDocuments('proj1', { titleContains: 'nonexistent' });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toHaveLength(0);
+      }
+    });
+
+    it('TC-FIX-05: titleContains SQL injection resistance', async () => {
+      await store.createDocument({
+        projectId: 'proj1',
+        title: 'Chapter 1',
+        isComposition: false,
+        content: 'Content',
+      });
+
+      const result = await store.listDocuments('proj1', {
+        titleContains: "'; DROP TABLE documents; --",
+      });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toHaveLength(0);
+      }
+
+      // Verify table still exists by listing normally
+      const verify = await store.listDocuments('proj1', {});
+      expect(verify.ok).toBe(true);
+      if (verify.ok) {
+        expect(verify.value.length).toBeGreaterThan(0);
+      }
+    });
+  });
+
   describe('Document operations', () => {
     it('TC-DS-01: createDocument inserts and returns document', async () => {
       const result = await store.createDocument({

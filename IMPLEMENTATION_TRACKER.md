@@ -77,12 +77,26 @@ Agents must mark items as `[x]` when verified complete, and track major mileston
 ## ⏳ Phase 4: Power App (`packages/power-app`)
 *Desktop application using React + Electron.*
 
-- [ ] Initialize Electron + React window scaffolding.
-- [ ] Build **Project Browser** (Tag-based unified file tree viewer).
-- [ ] Build **Leaf Editor** (CodeMirror 6 integration for prose markdown).
-- [ ] Build **Composition Builder** (Drag-and-drop slot lists, visual broken reference handling).
-- [ ] Build **Preset Configurator** (Visual Rule builder outputting JSON rules, variable state panel, token estimation display).
-- [ ] Integrate File System output adapter to export `.md`.
+### Phase 4a: MVP (Basic Authoring + Composition + Variant Selection)
+*Electron + React + Zustand. Working directory model (game engine paradigm). OmniSearch (title+alias). Visual composition canvas. Basic resolution (no rules).*
+
+**Sub-tasks:**
+- [x] **PA-FIX** Fix `adapter-sqlite` `listDocuments` `titleContains` filter (prerequisite for omnisearch)
+- [x] **PA-001** Scaffold Electron + Vite + React + dependencies
+- [ ] **PA-002** Project lifecycle (new, open, save, save-as) + `.eunoistoria` file format
+- [ ] **PA-003** OmniSearch sidebar (title + alias search, results list)
+- [ ] **PA-004** Leaf editor (CodeMirror 6 markdown editor with autosave)
+- [ ] **PA-005** Composition canvas (visual workflow builder, [+] buttons, slot items, resolve)
+- [ ] **PA-006** Variant groups + variant selector popup (Radix Popover)
+- [ ] **PA-007** End-to-end validation + `POWER_APP.md` spec
+
+### Phase 4b: Power User Features (Future)
+- [ ] Tags + tag assignment UI
+- [ ] Drag-and-drop reordering (slots and variant members)
+- [ ] Dynamic presets + visual rule builder
+- [ ] Rule evaluation + token estimation display
+- [ ] Document history + rollback
+- [ ] Right sidebar (preset configurator)
 
 ---
 

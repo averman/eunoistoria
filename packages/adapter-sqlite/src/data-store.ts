@@ -158,7 +158,19 @@ export class SqliteDataStore {
         params.push(filters.isComposition ? 1 : 0);
       }
 
-      sql += ' ORDER BY created_at DESC';
+      if (filters?.titleContains !== undefined) {
+        sql += ' AND (LOWER(title) LIKE LOWER(?) OR LOWER(alias) LIKE LOWER(?))';
+        const pattern = `%${filters.titleContains}%`;
+        params.push(pattern, pattern);
+      }
+
+      if (filters?.titleContains !== undefined) {
+        sql += ' ORDER BY CASE WHEN LOWER(title) LIKE LOWER(?) THEN 0 ELSE 1 END ASC, created_at DESC';
+        const pattern = `%${filters.titleContains}%`;
+        params.push(pattern);
+      } else {
+        sql += ' ORDER BY created_at DESC';
+      }
 
       const rows = await this.connection.execute(sql, params);
       const documents = (rows as any[]).map(row => ({

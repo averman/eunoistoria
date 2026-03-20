@@ -1,47 +1,122 @@
-# Changelog
+# Changelog — Extendable Markdown Editor
 
-All notable changes to the Extendable Markdown Editor will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to Semantic Versioning (monorepo scoped).
-
-## [Unreleased]
-
-### Added
-- **Phase 1 Complete**: Implemented pure, functional `packages/types` interfaces for the Hexagonal Architecture Engine.
-  - `entities.ts`: Defined `DataDocument` (unresolved input) and `ResolvedDocument` (output AST).
-  - `rules.ts`: Defined strictly typed JSON AST structure for `Premise` and `Action`.
-  - `ports.ts`: Defined `DataStorePort`, `AccessFilterPort`, and `OutputPort` interfaces.
-- Initialized pnpm monorepo structure with Turborepo caching.
-- Scaffolded 7 core packages: \`types\`, \`engine\`, \`sql-template\`, \`adapter-sqlite\`, \`adapter-postgres\`, \`power-app\`, \`reader-app\`.
-- Set up base \`tsconfig.json\` and \`vitest.workspace.ts\`.
-- Added dummy tests validating build/test pipelines across all workspaces.
-- Synchronized `CLAUDE.md` and `REVIEW_AGENT_INSTRUCTIONS.md` to reflect the Antigravity agent workflow and Walkthrough artifacts.
-- Authored a semantics-first `README.md` identifying the product as a Multiversal CMS.
-- Initialized local git repository and linked to `origin` remote.
-- **Phase 2 Complete**: Implemented the full `packages/engine` business logic layer (TYP-001–ENG-013).
-  - `packages/types`: Added `crud.ts` (flat DB records, CRUD inputs, `DocumentPredicate`, `QueryPlan`, `SlotRuleContext`); expanded `DataStorePort` (40+ methods); added `engine-interface.ts` (`Engine` interface); added 6 engine error enums to `results.ts`; updated `entities.ts` (`TagId`, new `CompositionSlot` schema, `Preset.adHocDocuments`).
-  - `packages/engine/src`: `token-estimation.ts`, `rule-evaluator.ts` (toggle/sort/select with type coercion D-BP-10), `cycle-detection.ts` (BFS), `validation.ts`, `resolution.ts` (recursive walker with access filter), `query-builder.ts`, plus `crud/` modules for documents, slots, variant groups, tags, and presets.
-  - `packages/engine/tests`: 104 tests across 14 test files (mock data store, unit tests per module, CRUD tests, integration tests) — all passing.
-  - Engine public API exposed via `createEngine(dataStore, accessFilter): Engine` factory.
-- **Phase 3 Complete**: Implemented the storage layer with SQLite MVP (SQL-001–ADT-004, Postgres deferred to Phase 5).
-  - `packages/sql-template`: Abstract SQL template system with schema definitions (9 tables), parameterized query builder (30+ methods supporting SQLite and Postgres syntax), and migration versioning. 66 tests passing.
-  - `packages/adapter-sqlite`: SQLite adapter implementing `DataStorePort` via `better-sqlite3`. Provides full CRUD operations, transaction support with rollback, and complete DataStore interface. 61 tests passing (23 connection tests, 19 data-store tests, 18 integration tests).
-  - Built on TDD: All tests created before implementation, all passing.
-  - Architecture: Hexagonal (ports/adapters), zero engine dependencies on specific databases, clean separation of concerns.
-  - Ready for Phase 4 (Power App) to begin using SQLite-backed storage.
-
-
-### Changed
-- Finalized architecture decisions in `DECISION_LOG.md`: 
-  - Monorepo tooling: pnpm + turborepo
-  - UI framework: React + Electron + CodeMirror 6
-  - Server framework: Fastify (Serverless ready)
-- Reorganized raw documentation markdown files into structured `docs/` and `packages/` directories.
-
-### Fixed
-- N/A
+All notable changes to this project are documented here. Format: [Date] [Phase/Component] [Change Type] [Description]
 
 ---
 
-*Note for Agents: Update this file incrementally as features from the Implementation Tracker are completed.*
+## 2026-03-20 — Phase 4a: Power App MVP (In Progress)
+
+### PA-FIX: SQLite Adapter listDocuments Filter
+- **Type:** Bug Fix (Prerequisite)
+- **Status:** ✅ Complete (66/66 tests passing)
+- **Changes:**
+  - Implemented `titleContains` filter in `SqliteDataStore.listDocuments()`
+  - Case-insensitive substring matching on `title` and `alias` fields
+  - Results prioritize title matches over alias matches
+  - SQL injection protected via parameterized queries
+- **Files:**
+  - `packages/adapter-sqlite/src/data-store.ts` — added filter logic + sorting
+  - `packages/adapter-sqlite/tests/data-store.test.ts` — 5 new test cases (TC-FIX-01 to TC-FIX-05)
+- **Unblocks:** PA-003 (OmniSearch)
+- **Reference:** `docs/tasks/PA-FIX-WALKTHROUGH.md`
+
+### PA-001: Electron + Vite + React Scaffold
+- **Type:** Feature (Foundation)
+- **Status:** ✅ Complete (5/5 tests passing, build successful)
+- **Changes:**
+  - Scaffolded Electron desktop app using electron-vite
+  - React 18 renderer with TypeScript strict mode
+  - Tailwind CSS styling foundation
+  - Context-bridge security pattern (preload + contextIsolation)
+  - Hot module reloading (HMR) support
+- **New Files (16):**
+  - Config: `package.json`, `tsconfig.{json,node.json,web.json}`, `electron.vite.config.ts`, `tailwind.config.js`, `postcss.config.js`, `vitest.config.ts`
+  - Main Process: `src/main/index.ts`
+  - Preload: `src/preload/index.ts`
+  - Renderer: `src/renderer/{index.html, src/main.tsx, src/App.tsx, src/index.css}`
+  - Tests: `tests/scaffold.test.ts`
+- **Dependencies Added (19):**
+  - Runtime: react, react-dom, @eunoistoria/{engine, adapter-sqlite, types}
+  - Dev: electron, electron-vite, vite, @vitejs/plugin-react, tailwindcss, typescript tools, vitest
+- **Unblocks:** PA-002 (Project Lifecycle)
+- **Reference:** `docs/tasks/PA-001-WALKTHROUGH.md`
+
+---
+
+## 2026-03-16 — Phase 3: Storage Layer with SQLite MVP (Complete)
+
+### Phase 3a: SQL Template Package
+- **Type:** Feature (Core Infrastructure)
+- **Status:** ✅ Complete (66 tests)
+- **Summary:** Schema DDL, parameterized SQL templates, migration system, connection abstraction
+
+### Phase 3b: SQLite Adapter
+- **Type:** Feature (Integration)
+- **Status:** ✅ Complete (61 tests)
+- **Summary:** SqliteConnection + SqliteDataStore via better-sqlite3, full CRUD implementation
+
+---
+
+## 2026-03-15 — Phase 2: Engine Core (Complete)
+
+- **Type:** Feature (Business Logic)
+- **Status:** ✅ Complete (127 tests)
+- **Summary:**
+  - TYP-001 to TYP-005: Type system updates (CRUD + validation types)
+  - ENG-001 to ENG-013: Engine implementation (token estimation, rule evaluation, cycle detection, CRUD, resolution, query builder)
+
+---
+
+## 2026-03-15 — Phase 1: Foundation Types (Complete)
+
+- **Type:** Feature (Type Definitions)
+- **Status:** ✅ Complete
+- **Summary:** Entity types, rule types, resolution types, port interfaces, error enums
+
+---
+
+## 2026-03-15 — Phase 0: Project Scaffolding (Complete)
+
+- **Type:** Infrastructure
+- **Status:** ✅ Complete
+- **Summary:** Monorepo setup (pnpm + turborepo), sub-project scaffolding, test configuration, documentation structure
+
+---
+
+## Upcoming
+
+### Phase 4a (In Progress)
+- [ ] PA-002 — Project Lifecycle + .eunoistoria File Format
+- [ ] PA-003 — OmniSearch Sidebar
+- [ ] PA-004 — Leaf Editor (CodeMirror)
+- [ ] PA-005 — Composition Canvas
+- [ ] PA-006 — Variant Groups + Selector
+- [ ] PA-007 — End-to-End Validation
+
+### Phase 4b (Deferred)
+- Tags + tag-based filtering UI
+- Drag-and-drop reordering
+- Dynamic presets + visual rule builder
+- Rule evaluation + token estimation display
+- Document history + rollback
+- Right sidebar (preset configurator)
+
+### Phase 5 (Deferred)
+- Postgres adapter implementation
+- Reader App (Fastify backend)
+- Web/mobile frontend for reader distribution
+
+---
+
+## Key Metrics
+
+| Phase | Tests | Status | Date |
+|---|---|---|---|
+| Phase 0 | — | ✅ | 2026-03-15 |
+| Phase 1 | — | ✅ | 2026-03-15 |
+| Phase 2 | 127 | ✅ | 2026-03-15 |
+| Phase 3 | 127 | ✅ | 2026-03-20 |
+| Phase 4a (PA-FIX) | 66 | ✅ | 2026-03-20 |
+| Phase 4a (PA-001) | 5 | ✅ | 2026-03-20 |
+
+**Total Tests Passing:** 325+ (across all completed phases and tasks)

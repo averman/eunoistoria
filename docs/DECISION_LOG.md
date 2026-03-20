@@ -150,3 +150,83 @@ Format:
 - **Rationale:** Timestamps are human-readable in logs and databases (useful for debugging). Random suffix prevents collisions in the rare case of simultaneous creation. No additional dependencies. Simple to understand and trace. Fine for the local-first MVP.
 - **Alternatives considered:** UUIDs v4 (standard but unreadable). Snowflakes (adds complexity). Database sequence IDs (couples application to SQL schema). NanoID (adds dependency).
 - **Consequences:** IDs are 28-char strings, not 36-char UUIDs. Logs are more readable. For Reader App (Phase 5) with potential horizontal scaling, UUIDs should be adopted. Migration path: generate UUIDs on export, or re-ID at phase boundary.
+
+### DEC-015 Power App Desktop Framework: Electron + Preload + Context Bridge
+- **Date:** 2026-03-20
+- **Context:** Power App (Phase 4) needs a desktop framework. Options: Electron, Tauri, NW.js.
+- **Decision:** Electron with Preload script + context bridge pattern. Main process runs engine + adapters + IPC handlers. Renderer is vanilla React, calls `window.eunoistoria.*` API (no Node imports).
+- **Rationale:** Electron is mature, proven for complex desktop apps (VSCode, Discord, etc.). Preload + context bridge is the Electron security best practice (no `nodeIntegration`). Clean separation between main (engine/data) and renderer (UI).
+- **Alternatives considered:** Tauri (smaller binary, Rust backend, but more friction with `better-sqlite3` native bindings). NW.js (legacy, less maintained).
+- **Consequences:** Standard Electron app structure. Bundle size ~150MB (acceptable for desktop). Build complexity handled by `electron-vite`. Main process is async, renderer is sync wrt IPC.
+
+### DEC-016 Power App State Management: Zustand
+- **Date:** 2026-03-20
+- **Context:** React state management for Power App. Options: Redux, Zustand, Jotai, Context API.
+- **Decision:** Zustand — minimal hooks-based library, no boilerplate, easy to scale.
+- **Rationale:** Redux is overkill for MVP. Zustand fits the bill: simple API, small bundle, no DevTools needed initially. Easy to graduate to Redux later if needed.
+- **Alternatives considered:** Redux (too much boilerplate for MVP). Context API (limited for complex state trees). Jotai (good but less familiar).
+- **Consequences:** Three simple Zustand stores: project, editor, search. No Redux DevTools (can add later). Minimal learning curve for new developers.
+
+### DEC-017 Power App Working Directory Model: Game Engine Paradigm
+- **Date:** 2026-03-20
+- **Context:** How should Power App persist user work? Options: monolithic save file, auto-save to working directory, version control-based.
+- **Decision:** Working directory model (like Blender, game engines, VS Code "open folder"). Working SQLite db is persistent and auto-saved. Export (Save button) creates `.eunoistoria` file (compressed + obfuscated). No "unsaved changes" prompt on exit — work always persists in the working directory.
+- **Rationale:** Authors often work in iterations. A working directory that auto-saves to disk is safer than a single monolithic file. Export creates an archive for portability (like game builds). User can have multiple project directories open in sequence.
+- **Alternatives considered:** Single `.eunoistoria` file with auto-save (simpler but less flexible). Linear version history (too complex). Cloud sync (deferred to Phase 5).
+- **Consequences:** Working dir persists between sessions. On launch, resume last active project. On new/open project, prompt "Save current before switching?" Projects can be recovered from working directories even if never exported. `.eunoistoria` files are optional exports, not the source of truth.
+
+### DEC-018 Power App UI: Radix UI + Tailwind CSS
+- **Date:** 2026-03-20
+- **Context:** Component library and styling for Power App. Options: shadcn/ui, Material-UI, Chakra, custom CSS.
+- **Decision:** Radix UI primitives (unstyled, composable) + Tailwind CSS (utility-first styling).
+- **Rationale:** Full control over UI, lightweight, aligns with modern React patterns. Radix is battle-tested (used by Vercel, etc.). Tailwind is industry standard. No heavy component library overhead.
+- **Alternatives considered:** shadcn/ui (includes Radix + Tailwind, good but less flexible). Material-UI (heavy, opinionated). Custom CSS (too much work).
+- **Consequences:** Manual component composition, but maximum flexibility. Small bundle size. Tailwind build step required (already planned in electron-vite setup).
+
+### DEC-019 Power App Markdown Editor: CodeMirror 6
+- **Date:** 2026-03-20
+- **Context:** Markdown editor for leaf documents. Options: CodeMirror, Monaco, TinyMCE, ProseMirror.
+- **Decision:** CodeMirror 6 — modular, extensible, lightweight. Includes markdown syntax highlighting + line wrapping out of the box.
+- **Rationale:** CodeMirror is specifically designed for code/markdown editing, not rich text. Modular (only load what you need). Good performance. Active maintenance.
+- **Alternatives considered:** Monaco (heavy, designed for code IDEs). TinyMCE (rich text, overkill). ProseMirror (excellent but complex).
+- **Consequences:** CodeMirror v6 API is different from v5 (good, modern). Bundle is ~80KB gzipped. Syntax highlighting and themes are plugins.
+
+### DEC-020 Power App File Format: `.eunoistoria` with Magic Header + Obfuscated Zip
+- **Date:** 2026-03-20
+- **Context:** Portable format for projects (export from working directory). Options: plain ZIP, TAR.GZ, custom binary, encrypted ZIP.
+- **Decision:** `.eunoistoria` format: 16-byte magic header (`EUNOISTORIA\0` + version + reserved) followed by ZIP archive with first 4 bytes XOR'd with 0x42.
+- **Rationale:** ZIP is universal, portable, supported everywhere. XOR obfuscation hides the file type from casual inspection (not security, just obfuscation). Magic header enables version upgrades in the future. Simple to implement with `archiver` + `unzipper` npm packages.
+- **Alternatives considered:** Plain ZIP (no obfuscation, looks like archive). TAR.GZ (less common on Windows). Encrypted ZIP (requires password, adds complexity). Custom binary format (no portability).
+- **Consequences:** `.eunoistoria` files are ~5-15% larger than raw SQLite (ZIP overhead). Export/import adds 100-500ms per project (IO bound, acceptable). Files are not directly openable with zip tools (by design).
+
+### DEC-021 Power App OmniSearch: Title + Alias Only (No Body Text Initially)
+- **Date:** 2026-03-20
+- **Context:** Search across documents for the file browser. Options: title only, title + alias, full-text body search.
+- **Decision:** Title (weight 1.0) + Alias (weight 0.7). Body text search deferred to Phase 4b.
+- **Rationale:** 200+ chapter projects need fast search. Full-text body search is slow without proper indexing (FTS5). Title + alias covers 90% of user needs (authors remember chapter names, not content). Body search can be added as opt-in later.
+- **Alternatives considered:** Title only (too restrictive). Full-text body search (slow without FTS5, added complexity). Tag-based search (better for Phase 4b, after tags UI).
+- **Consequences:** `listDocuments` in adapter needs `titleContains` filter fix. Search results are instant (simple LIKE query). Body search requires separate implementation and FTS5 indexing.
+
+### DEC-022 Power App Composition Canvas: Visual Workflow Builder (No Tree Sidebar)
+- **Date:** 2026-03-20
+- **Context:** How to edit compositions visually? Options: tree sidebar (traditional), workflow canvas (modern), text-based slot list.
+- **Decision:** Visual workflow canvas: continuous markdown preview with [+] buttons between items (like Figma artboard or workflow tools). No tree sidebar.
+- **Rationale:** 200+ chapter projects with variants make tree navigation unwieldy. Visual canvas scales better (cards stack vertically). [+] buttons are intuitive for adding content. Slot terminology hidden (users see rendered content, not "slots").
+- **Alternatives considered:** Tree sidebar (doesn't scale to 200+ chapters). Text-based slot list (less intuitive). Tabular grid (less visual).
+- **Consequences:** Composition builder component is large (~500 LOC). Slot reordering via up/down buttons (drag-drop deferred to Phase 4b). Preview rendering must be fast (markdown → chunks for each slot).
+
+### DEC-023 Power App Variant Selection: Simple Popover (No Inline Dropdown)
+- **Date:** 2026-03-20
+- **Context:** How should users select variants when resolving a composition? Options: inline dropdown, modal dialog, popover, sidebar panel.
+- **Decision:** Radix Popover (simple popup) triggered by clicking variant selector button on slot item. Lists variant members by name, click to select.
+- **Rationale:** Popover keeps the interface compact and focused. Easy to dismiss. Radix Popover is accessible, tested, and integrates well with Tailwind.
+- **Alternatives considered:** Inline dropdown (clutters canvas). Modal dialog (overkill for simple selection). Sidebar panel (removes context).
+- **Consequences:** Selection is ephemeral (presentation state, not persisted). Users must re-select if they resolve again. Full rule-based auto-selection deferred to Phase 4b (presets).
+
+### DEC-024 Power App "Save" Terminology: "Export" (Not "Save As")
+- **Date:** 2026-03-20
+- **Context:** Naming of the project export action. Options: "Save", "Export", "Publish", "Archive".
+- **Decision:** "Export" for explicit save-to-.eunoistoria action. The working directory is always "saved" (auto-persisted). Only export is optional/manual.
+- **Rationale:** Aligns with game engine terminology (build/export). Clarifies that export ≠ normal save (which is automatic). Reduces user confusion about when to click save.
+- **Alternatives considered:** "Save" (confusing, implies working dir is not saved). "Save As" (implies overwriting, but export can create new file). "Publish" (too formal).
+- **Consequences:** Menu shows "Export Project" button, not "Save". Cmd+S (or Ctrl+S) triggers export. Users understand that closing the app without exporting doesn't lose work.
